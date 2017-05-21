@@ -1,10 +1,9 @@
-function evalJson(jsonUrl, callback) {
+function getJson(jsonUrl, callback) {
   var request = new XMLHttpRequest();
   request.open('GET', jsonUrl);
   request.onreadystatechange = function () {
     if (request.readyState == 4 && request.status == 200) {
-      var objs = eval('[' + request.responseText + ']');
-      callback(objs[0]);
+      callback(JSON.parse(request.responseText));
     }
   }
   request.send(null);
@@ -15,7 +14,7 @@ function fillVersion(version) {
 }
 
 function getVersions() {
-  evalJson('https://launchermeta.mojang.com/mc/game/version_manifest.json', function (json) {
+  getJson('https://launchermeta.mojang.com/mc/game/version_manifest.json', function (json) {
     var element = document.getElementById('drawer-nav');
     element.innerHTML = '<a class="mdl-navigation__link" href="javascript:getVersions();">刷新列表</a>';
     for (var i in json.versions) {
@@ -32,12 +31,12 @@ function genDownloadLink() {
   var output = document.getElementById('output');
   title.className = 'mdl-card__title mdl-color--blue mdl-color-text--white';
   output.innerHTML = '<h1>:|</h1><p>正在生成。</p>';
-  evalJson('https://launchermeta.mojang.com/mc/game/version_manifest.json', function (json) {
+  getJson('https://launchermeta.mojang.com/mc/game/version_manifest.json', function (json) {
     var download = document.getElementById('text1').value;
     for (var i in json.versions) {
       if (json.versions.hasOwnProperty(i) && json.versions[i].id === download) {
         var version = json.versions[i];
-        evalJson(version.url, function (versionJson) {
+        getJson(version.url, function (versionJson) {
           var string = '<h1>:)</h1><p>生成完毕。</p><p>';
           string += '<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="' + version.url + '">JSON</a>';
           string += '<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="' + versionJson.downloads.client.url + '">客户端</a>';
