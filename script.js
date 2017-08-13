@@ -9,10 +9,6 @@ function getJson(jsonUrl, callback) {
   request.send(null);
 }
 
-function fillVersion(version) {
-  document.getElementById('text1').value = version;
-}
-
 function getVersions() {
   getJson('https://launchermeta.mojang.com/mc/game/version_manifest.json', function (json) {
     var element = document.getElementById('drawer-nav');
@@ -20,25 +16,24 @@ function getVersions() {
     for (var i in json.versions) {
       if (json.versions.hasOwnProperty(i)) {
         var version = json.versions[i].id;
-        element.innerHTML += '<a class="mdl-navigation__link" href="javascript:fillVersion(\'' + version + '\');">' + version + '</a>';
+        element.innerHTML += '<a class="mdl-navigation__link" href="javascript:genGameDownloadLink(\'' + version + '\');">' + version + '</a>';
       }
     }
   });
 }
 
-function genDownloadLink() {
-  var title = document.getElementById('download-card__title');
-  var output = document.getElementById('output');
+function genGameDownloadLink(version) {
+  var title = document.getElementById('game-card__title');
+  var output = document.getElementById('game-card__output');
   title.className = 'mdl-card__title mdl-color--blue mdl-color-text--white';
   output.innerHTML = '<h1>:|</h1><p>正在生成。</p>';
   getJson('https://launchermeta.mojang.com/mc/game/version_manifest.json', function (json) {
-    var download = document.getElementById('text1').value;
     for (var i in json.versions) {
-      if (json.versions.hasOwnProperty(i) && json.versions[i].id === download) {
-        var version = json.versions[i];
-        getJson(version.url, function (versionJson) {
+      if (json.versions.hasOwnProperty(i) && json.versions[i].id === version) {
+        var versionUrl = json.versions[i].url;
+        getJson(versionUrl, function (versionJson) {
           var string = '<h1>:)</h1><p>生成完毕。</p><p>';
-          string += '<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="' + version.url + '">JSON</a>';
+          string += '<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="' + versionUrl + '">JSON</a>';
           string += '<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="' + versionJson.downloads.client.url + '">客户端</a>';
           if (versionJson.downloads.hasOwnProperty('server')) {
             string += '<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="' + versionJson.downloads.server.url + '">服务端</a>';
