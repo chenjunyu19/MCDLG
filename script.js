@@ -69,5 +69,4 @@ function genLauncherDownloadLink() {
     actions.innerHTML = linksHTML;
     return;
   });
-  supporting.innerHTML = '<h1>:(</h1><h3>生成失败。请检查网络。</h3>';
 }
